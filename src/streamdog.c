@@ -125,7 +125,7 @@ int main(int argc, char *argv[]) {
             break;
         }
 
-        sleep(3600);
+        sleep(1800);
     }
 
     return 0;
