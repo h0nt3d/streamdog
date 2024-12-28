@@ -1,6 +1,8 @@
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <signal.h>
 
 void daemonize() {
     pid_t pid = fork();
@@ -20,9 +22,8 @@ void daemonize() {
         exit(EXIT_SUCCESS);
     }
 
-    else {
-        printf("Session created\n");
-    }
+    signal(SIGCHLD, SIG_IGN);
+    signal(SIGHUP, SIG_IGN);
 
 }
 
