@@ -11,7 +11,9 @@
 void daemonize();
 void sendNotification(const char *message);
 int isProgramRunning(const char *programName);
-char line[256];
+
+char line[256]; //name of program
+
 
 void daemonize() {
     pid_t pid = fork();
@@ -114,19 +116,27 @@ int main(int argc, char *argv[]) {
 
     const char *programName = argv[1];
 
+    int counter = 0;
+
+    const int TIME_INTERVAL = 1800;
+
     daemonize();
 
     while(1) {
-        if (isProgramRunning(programName))
-            sendNotification(strcat(line," is running."));
-        else {
-            sendNotification("Target is not running.");
-            exit(EXIT_FAILURE);
-            break;
+
+        while (counter <= TIME_INTERVAL) {
+            if (!isProgramRunning(programName)) {
+                sendNotification("Target is not running.");
+                exit(EXIT_FAILURE);
+            }
+            else if (isProgramRunning(programName) && counter == 0)
+                sendNotification(strcat(line," is running."));
+
+            sleep(1);
+            counter = (counter + 1) % TIME_INTERVAL;
+
         }
 
-        sleep(1800);
     }
-
     return 0;
 }
