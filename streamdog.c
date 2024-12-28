@@ -2,11 +2,16 @@
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <time.h>
 #include <unistd.h>
 #include <signal.h>
+#include <dirent.h>
 
 void daemonize();
 void sendNotification(const char *message);
+int isProgramRunning(const char *programName);
+char line[256];
 
 void daemonize() {
     pid_t pid = fork();
@@ -58,11 +63,70 @@ void sendNotification(const char *message) {
     system(command);
 }
 
-int main() {
-    daemonize();
-    sendNotification("streamdog started succesfully");
-    while (1) {
-        sleep(60);
+int isProgramRunning(const char *programName) {
+    DIR *dir;
+    struct dirent *entry;
+    char path[256];
+    FILE *fp;
+
+    dir = opendir("/proc");
+    if (dir == NULL) {
+        perror("Failed to open /proc directory");
+        return 0;
     }
+
+    while ((entry = readdir(dir)) != NULL) {
+        if(entry -> d_type == DT_DIR) {
+            snprintf(path, sizeof(path), "/proc/%s/comm", entry -> d_name);
+
+            fp = fopen(path, "r");
+            if (fp != NULL) {
+                if (fgets(line, sizeof(line), fp)) {
+                    line[strcspn(line, "\n")] = 0;
+
+                    if (strcmp(line, programName) == 0) {
+                        fclose(fp);
+                        closedir(dir);
+                        return 1;
+                    }
+
+                }
+                fclose(fp);
+            }
+        }
+    }
+    closedir(dir);
+    return 0;
+}
+
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        printf("Invalid number of arguments (Make sure a target is set)\n");
+        exit(EXIT_FAILURE);
+    }
+
+    else if (argc > 2) {
+        printf("Error, too many arguments (only set 1 traget)\n");
+        exit(EXIT_FAILURE);
+    }
+
+    printf("Welcome to streamdog 1.0\n");
+
+    const char *programName = argv[1];
+
+    daemonize();
+
+    while(1) {
+        if (isProgramRunning(programName))
+            sendNotification(strcat(line," is running."));
+        else {
+            sendNotification("Target is not running.");
+            exit(EXIT_FAILURE);
+            break;
+        }
+
+        sleep(3600);
+    }
+
     return 0;
 }
