@@ -1,3 +1,4 @@
+#include <fcntl.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,7 +14,6 @@ void daemonize() {
     }
 
     if (pid > 0) {
-        printf("Fork is succesful\n");
         exit(EXIT_SUCCESS);
     }
 
@@ -22,8 +22,24 @@ void daemonize() {
         exit(EXIT_SUCCESS);
     }
 
-    signal(SIGCHLD, SIG_IGN);
+    signal(SIGCHLD, SIG_IGN);   //ignore signals from terminal
     signal(SIGHUP, SIG_IGN);
+
+    pid = fork();   //second fork
+
+    if (pid < 0) {
+        perror("Fork Failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (pid > 0) {
+        exit(EXIT_SUCCESS);
+    }
+
+    if (chdir("/") < 0) {
+        perror("Falied to change directory\n");
+    }
+
 
 }
 
