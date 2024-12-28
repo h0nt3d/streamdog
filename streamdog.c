@@ -5,6 +5,9 @@
 #include <unistd.h>
 #include <signal.h>
 
+void daemonize();
+void sendNotification(const char *message);
+
 void daemonize() {
     pid_t pid = fork();
 
@@ -47,12 +50,19 @@ void daemonize() {
     open("/dev/null", O_RDONLY);
     open("/dev/null", O_WRONLY);
     open("/dev/null", O_RDWR);
-
-
 }
 
+void sendNotification(const char *message) {
+    char command[256];
+    snprintf(command, sizeof(command), "notify-send 'streamdog' '%s'", message);
+    system(command);
+}
 
 int main() {
     daemonize();
+    sendNotification("streamdog started succesfully");
+    while (1) {
+        sleep(60);
+    }
     return 0;
 }
