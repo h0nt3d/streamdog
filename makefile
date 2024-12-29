@@ -9,7 +9,7 @@ $(BUILD_DIR)/streamdog: $(SRC_DIR)/streamdog.c
 
 install :
 	install -Dm755 $(BUILD_DIR)/streamdog /usr/bin/streamdog
-	install -Dm644 streamdog.service /lib/systemd/system/streamdog.service
+	install -Dm644 $(SRC_DIR)/streamdog.service /lib/systemd/system/streamdog.service
 	systemctl daemon-reload
 
 uninstall :
