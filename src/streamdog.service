@@ -1,0 +1,11 @@
+[Unit]
+Description=Streamdog Daemon
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/streamdog
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target
