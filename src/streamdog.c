@@ -13,7 +13,7 @@ void sendNotification(const char *message);
 int isProgramRunning(const char *programName);
 
 char line[256]; //name of program
-
+char version[256] = "streamdog 0.1.0";
 
 void daemonize() {
     pid_t pid = fork();
@@ -112,7 +112,7 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    printf("Welcome to streamdog 1.0\n");
+    printf("%s\n",version);
 
     const char *programName = argv[1];
 
