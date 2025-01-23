@@ -1,7 +1,7 @@
 # streamdog
 ![alt text](https://github.com/h0nt3d/streamdog/blob/main/images/streamdog.png?raw=true)
 
-A Linux Daemon designed to monitor an executable and notify every 30 minutes hour while the exexutable is running to help time management.
+A Linux Daemon designed to monitor an executable and notify every 30 minutes while the exexutable is running to help time management.
 
 
 
