@@ -3,7 +3,7 @@
 
 A Linux Daemon designed to monitor an executable and notify every 30 minutes while the executable is running to help time management.
 
-
+*Uses notify-send package*
 
 **Installation Steps:**
 
